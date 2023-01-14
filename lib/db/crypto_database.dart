@@ -72,4 +72,14 @@ CREATE TABLE $tableUsers (
     final id = await db.insert(tableCoins, coin.toJson());
     return coin.copy();
   }
+   Future<Exchange> insert_into_exchange(Exchange exchange) async {
+    final db = await instance.database;
+    final id = await db.insert(tableExchange, exchange.toJson());
+    return exchange.copy();
+  }
+   Future<Users> insert_into_users(Users users) async {
+    final db = await instance.database;
+    final id = await db.insert(tableUsers, users.toJson());
+    return users.copy();
+  }
 }

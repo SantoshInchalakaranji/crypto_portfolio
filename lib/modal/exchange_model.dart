@@ -30,4 +30,34 @@ class Exchange {
       required this.OctaFX,
       required this.OctaFXBuyPrice,
       required this.coinID});
+
+      Map<String, Object?> toJson() => {
+        ExchangeFields.coinID: coinID,
+        ExchangeFields.userID: userID,
+       ExchangeFields.Binance: Binance,
+        ExchangeFields.FTX: FTX,
+        ExchangeFields.OctaFX: OctaFX,
+        ExchangeFields.BinaceBuyPrice: BinaceBuyPrice,
+        ExchangeFields.FTXBuyPrice: FTXBuyPrice,
+        ExchangeFields.OctaFXBuyPrice: OctaFXBuyPrice
+      };
+
+  Exchange copy(
+          {int? userID,
+          int? coinID,
+          double? FTX,
+          double? Binance,
+          double? OctaFX,
+          double? BinaceBuyPrice,
+          double? FTXBuyPrice,
+          double? OctaFXBuyPrice}) =>
+      Exchange(
+          userID: userID ?? this.userID,
+          BinaceBuyPrice: BinaceBuyPrice ?? this.BinaceBuyPrice,
+          Binance: Binance ?? this.Binance,
+          FTX: FTX ?? this.FTX,
+          FTXBuyPrice: FTXBuyPrice ?? this.FTXBuyPrice,
+          OctaFX: OctaFX ?? this.OctaFX,
+          OctaFXBuyPrice: OctaFXBuyPrice ?? this.OctaFXBuyPrice,
+          coinID: coinID ?? this.coinID);
 }
