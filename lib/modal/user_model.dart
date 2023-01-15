@@ -1,6 +1,10 @@
 final String tableUsers = 'users';
 
 class UserFields {
+
+  static final List<String> values = [
+    userID,mobile,password, eMail, userName
+  ];
   static final String userID = 'userID';
   static final String mobile = 'mobile';
   static final String password = 'password';

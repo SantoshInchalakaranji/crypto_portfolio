@@ -1,6 +1,8 @@
 final String tableCoins = 'coins';
 
 class coinFields {
+  static final List<String> values = [coinID, coinName, coinPrice];
+
   static final String coinID = 'coinID';
   static final String coinPrice = 'coinPrice';
   static final String coinName = 'coinName';
@@ -19,6 +21,12 @@ class coins {
         coinFields.coinName: coinName,
         coinFields.coinPrice: coinPrice
       };
+
+  static coins fromJson(Map<String, Object?> json) => coins(
+    coinID: json[coinFields.coinID] as int,
+    coinName: json[coinFields.coinName] as String,
+    coinPrice: json[coinFields.coinPrice] as double
+  );
 
   coins copy({
     int? coinID,

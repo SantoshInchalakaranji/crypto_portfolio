@@ -29,6 +29,9 @@ class CryptoDatabase {
     final textPrimary = 'TEXT PRIMARY KEY';
 
     final batch = db.batch();
+
+    // used batch instead of db.execute because batch is more efficient for creating multiple tables
+    // but we have to add extra line batch.commit() at the end
     batch.execute('''
 CREATE TABLE $tableCoins (
   ${coinFields.coinID} $idType,
@@ -38,23 +41,25 @@ CREATE TABLE $tableCoins (
 ''');
     batch.execute('''
 CREATE TABLE $tableExchange (
-   ${ExchangeFields.coinID} $idType,
-  ${ExchangeFields.userID} $idType,
+   ${ExchangeFields.coinID} INTEGER,
+  ${ExchangeFields.userID} INTEGER,
   ${ExchangeFields.Binance} $DOUBLE,
  ${ExchangeFields.FTX} $DOUBLE,
  ${ExchangeFields.OctaFX} $DOUBLE,
  ${ExchangeFields.BinaceBuyPrice} $DOUBLE,
  ${ExchangeFields.FTXBuyPrice} $DOUBLE,
-  ${ExchangeFields.OctaFXBuyPrice} $DOUBLE
+  ${ExchangeFields.OctaFXBuyPrice} $DOUBLE,
+  PRIMARY KEY(${ExchangeFields.coinID},${ExchangeFields.userID})
 )
 ''');
     batch.execute('''
 CREATE TABLE $tableUsers (
-   ${UserFields.userID} $idType,
-  ${UserFields.mobile} $textPrimary,
+   ${UserFields.userID} INTEGER,
+  ${UserFields.mobile} TEXT,
  ${UserFields.password} $varchar,
  ${UserFields.eMail} $varchar,
- ${UserFields.userName} $varchar
+ ${UserFields.userName} $varchar,
+ PRIMARY KEY(${UserFields.userID}, ${UserFields.mobile})
  
 )
 ''');
@@ -72,14 +77,49 @@ CREATE TABLE $tableUsers (
     final id = await db.insert(tableCoins, coin.toJson());
     return coin.copy();
   }
-   Future<Exchange> insert_into_exchange(Exchange exchange) async {
+
+  Future<Exchange> insert_into_exchange(Exchange exchange) async {
     final db = await instance.database;
     final id = await db.insert(tableExchange, exchange.toJson());
     return exchange.copy();
   }
-   Future<Users> insert_into_users(Users users) async {
+
+  Future<Users> insert_into_users(Users users) async {
     final db = await instance.database;
     final id = await db.insert(tableUsers, users.toJson());
     return users.copy();
+  }
+
+  // to read a single coin object, 1 row ,
+  Future<coins> readCoin(int id) async {
+    final db = await instance.database;
+    final maps = await db.query(tableCoins,
+        //we can pass get necessary column names which is to be retrived, here i am retriving all colums
+        columns: coinFields.values,
+        where: '${coinFields.coinID}=$id');
+    if (maps.isNotEmpty) {
+      return coins.fromJson(maps.first);
+    } else {
+      throw Exception('coinID $id not found');
+    }
+  }
+
+  Future<List<coins>> readAllCoins() async {
+    final db = await instance.database;
+    final result = await db.query(tableCoins,
+        orderBy:
+            '${coinFields.coinName} ASC'); //ordering the coins in ascsending order A-Z
+    return result.map((json) => coins.fromJson(json)).toList();
+  }
+
+  Future<int> updateCoin(coins coin) async {
+    final db = await instance.database;
+    return db.update(tableCoins, coin.toJson(),
+        where: '${coinFields.coinID}= ${coin.coinID}');
+  }
+
+  Future<int> deleteCoin(int id) async {
+    final db = await instance.database;
+    return await db.delete(tableCoins, where: '${coinFields.coinID}= $id');
   }
 }

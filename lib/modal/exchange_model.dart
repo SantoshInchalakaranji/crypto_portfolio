@@ -1,6 +1,12 @@
 final String tableExchange = 'exchange';
 
 class ExchangeFields {
+
+static final List<String> values = [
+    coinID,userID,FTX,Binance, OctaFX, 
+    BinaceBuyPrice, FTXBuyPrice, OctaFXBuyPrice
+  ];
+
   static final String userID = 'userID';
   static final String coinID = 'coinID';
   static final String FTX = 'FTX';
