@@ -1,6 +1,8 @@
 import 'package:crypto_portfolio/modal/coins.dart';
 import 'package:crypto_portfolio/modal/exchange_model.dart';
+import 'package:crypto_portfolio/modal/user_item_model.dart';
 import 'package:crypto_portfolio/modal/user_model.dart';
+import 'package:crypto_portfolio/widgets/user_item.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -28,18 +30,18 @@ class CryptoDatabase {
     final DOUBLE = 'DOUBLE NOT NULL';
     final textPrimary = 'TEXT PRIMARY KEY';
 
-    final batch = db.batch();
+ 
 
     // used batch instead of db.execute because batch is more efficient for creating multiple tables
     // but we have to add extra line batch.commit() at the end
-    batch.execute('''
+    await db.execute('''
 CREATE TABLE $tableCoins (
   ${coinFields.coinID} $idType,
   ${coinFields.coinName} $varchar,
   ${coinFields.coinPrice} $DOUBLE
 )
 ''');
-    batch.execute('''
+    await db.execute('''
 CREATE TABLE $tableExchange (
    ${ExchangeFields.coinID} INTEGER,
   ${ExchangeFields.userID} INTEGER,
@@ -49,22 +51,25 @@ CREATE TABLE $tableExchange (
  ${ExchangeFields.BinaceBuyPrice} $DOUBLE,
  ${ExchangeFields.FTXBuyPrice} $DOUBLE,
   ${ExchangeFields.OctaFXBuyPrice} $DOUBLE,
-  PRIMARY KEY(${ExchangeFields.coinID},${ExchangeFields.userID})
+  PRIMARY KEY(${ExchangeFields.coinID},${ExchangeFields.userID}),
+  FOREIGN KEY(${ExchangeFields.userID}) REFERENCES $tableUsers(${UserFields.userID}) ON DELETE CASCADE,
+  FOREIGN KEY(${ExchangeFields.coinID}) REFERENCES $tableCoins(${coinFields.coinID}) ON DELETE CASCADE
+
 )
 ''');
-    batch.execute('''
+    await db.execute('''
 CREATE TABLE $tableUsers (
    ${UserFields.userID} INTEGER,
   ${UserFields.mobile} TEXT,
  ${UserFields.password} $varchar,
  ${UserFields.eMail} $varchar,
  ${UserFields.userName} $varchar,
- PRIMARY KEY(${UserFields.userID}, ${UserFields.mobile})
+ PRIMARY KEY(${UserFields.userID})
  
 )
 ''');
 
-    await batch.commit();
+    
   }
 
   Future close() async {
@@ -110,6 +115,23 @@ CREATE TABLE $tableUsers (
         orderBy:
             '${coinFields.coinName} ASC'); //ordering the coins in ascsending order A-Z
     return result.map((json) => coins.fromJson(json)).toList();
+  }
+
+  Future<List<UserItemModel>> readUserCredentials() async {
+    final db = await instance.database;
+    final result = await db.rawQuery(
+        'SELECT ${UserFields.userID}, ${UserFields.mobile},${UserFields.userName} from ${tableUsers}');
+    return result.map((json) => UserItemModel.fromJson(json)).toList();
+  }
+
+  Future<List<String>> getMobileNumbers() async {
+    final db = await instance.database;
+
+    final result =
+        await db.rawQuery('SELECT ${UserFields.mobile} from ${tableUsers}');
+    return result
+        .map((numbers) => numbers[UserFields.mobile] as String)
+        .toList();
   }
 
   Future<int> updateCoin(coins coin) async {

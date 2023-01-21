@@ -37,6 +37,16 @@ class Users {
        UserFields.userName:userName
       };
 
+       static Users fromJson(Map<String, Object?> json) => Users(
+    userID: json[UserFields.userID] as int,
+     userName: json[UserFields.userName] as String,
+      mobile: json[UserFields.mobile] as String,
+       eMail: json[UserFields.eMail] as String,
+        password: json[UserFields.password] as String,
+
+    
+  );
+
       Users copy({
           int? userID,
    String?  mobile,

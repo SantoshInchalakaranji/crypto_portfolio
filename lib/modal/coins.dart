@@ -9,11 +9,11 @@ class coinFields {
 }
 
 class coins {
-  final int coinID;
-  final double coinPrice;
-  final String coinName;
+   final int coinID;
+  late double coinPrice;
+  late String coinName;
 
-  const coins(
+   coins(
       {required this.coinID, required this.coinName, required this.coinPrice});
 
   Map<String, Object?> toJson() => {
