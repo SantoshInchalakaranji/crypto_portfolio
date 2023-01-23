@@ -14,11 +14,19 @@ class CoinUpdater extends StatefulWidget {
 }
 
 class _CoinUpdaterState extends State<CoinUpdater> {
+  late TextEditingController coinNameInput;
+  late TextEditingController coinPriceInput;
+
+
   @override
-  Widget build(BuildContext context) {
-    final coinNameInput = TextEditingController(text: widget.coin.coinName);
-    final coinPriceInput =
-        TextEditingController(text: widget.coin.coinPrice.toString());
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    coinNameInput =  TextEditingController(text: widget.coin.coinName);
+    coinPriceInput = TextEditingController(text: widget.coin.coinPrice.toString());
+  }
+
+  
     void submitData() {
       final enteredCoinName = coinNameInput.text;
       final enteredCoinPrice = double.parse(coinPriceInput.text);
@@ -30,6 +38,9 @@ class _CoinUpdaterState extends State<CoinUpdater> {
 
       Navigator.of(context).pop();
     }
+  @override
+  Widget build(BuildContext context) {
+   
 
     return SingleChildScrollView(
       child: Container(

@@ -30,8 +30,6 @@ class CryptoDatabase {
     final DOUBLE = 'DOUBLE NOT NULL';
     final textPrimary = 'TEXT PRIMARY KEY';
 
- 
-
     // used batch instead of db.execute because batch is more efficient for creating multiple tables
     // but we have to add extra line batch.commit() at the end
     await db.execute('''
@@ -68,8 +66,6 @@ CREATE TABLE $tableUsers (
  
 )
 ''');
-
-    
   }
 
   Future close() async {
@@ -124,6 +120,21 @@ CREATE TABLE $tableUsers (
     return result.map((json) => UserItemModel.fromJson(json)).toList();
   }
 
+  Future<List<Exchange>> readExCoins(int userID) async {
+    final db = await instance.database;
+    final result = await db.query(tableExchange,
+        where: '${ExchangeFields.userID}=${userID}');
+
+    return result.map((json) => Exchange.fromJson(json)).toList();
+  }
+
+  Future<String> readPassword(String mobile) async {
+    final db = await instance.database;
+    var result = await db.rawQuery(
+        'SELECT ${UserFields.password} FROM ${tableUsers} WHERE ${UserFields.mobile}= ${mobile}');
+    return result[0][UserFields.password] as String;
+  }
+
   Future<List<String>> getMobileNumbers() async {
     final db = await instance.database;
 
@@ -140,8 +151,21 @@ CREATE TABLE $tableUsers (
         where: '${coinFields.coinID}= ${coin.coinID}');
   }
 
+  Future<int> updateExCoin(Exchange exCoin) async {
+    final db = await instance.database;
+    return db.update(tableExchange, exCoin.toJson(),
+        where:
+            '${ExchangeFields.coinID}= ${exCoin.coinID} AND ${ExchangeFields.userID}=${exCoin.userID}');
+  }
+
   Future<int> deleteCoin(int id) async {
     final db = await instance.database;
     return await db.delete(tableCoins, where: '${coinFields.coinID}= $id');
+  }
+
+  Future<int> deleteExCoin( int coinID, int userID) async {
+    final db = await instance.database;
+    return await db.delete(tableExchange,
+   where: '${ExchangeFields.coinID}= ${coinID} AND ${ExchangeFields.userID}=${userID}');
   }
 }

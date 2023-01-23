@@ -7,6 +7,8 @@ import 'package:crypto_portfolio/widgets/coin_updater.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:sqflite/sqflite.dart';
+
 class CoinDetailsPage extends StatefulWidget {
   const CoinDetailsPage({Key? key}) : super(key: key);
   static const routeName = '/coinDetail-screen';
@@ -34,7 +36,7 @@ class _CoinDetailsPageState extends State<CoinDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("in builddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+   
     if (coinList.isEmpty) {
       generatedCoinId = 0;
     } else {
@@ -42,15 +44,35 @@ class _CoinDetailsPageState extends State<CoinDetailsPage> {
       generatedCoinId++;
     }
     print("generated id =" + generatedCoinId.toString());
+
+
     void _addNewCoin(String coinName, double coinPrice) {
+         
+      try{
       final newCoin = coins(
           coinID: generatedCoinId, coinName: coinName, coinPrice: coinPrice);
+
+
       CryptoDatabase.instance.insert_into_coins(newCoin);
       print('inserted coin:' + newCoin.toString());
       setState(() {
         coinList.add(newCoin);
       });
       print(coinList);
+      }
+      on DatabaseException catch(e){
+           final scaffold = ScaffoldMessenger.of(context);
+                        scaffold.showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                                'Coin already exist'),
+                            action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: scaffold.hideCurrentSnackBar),
+                          ),
+                        );
+                       
+      }
     }
 
     void _startAddingCoin(BuildContext ctx) {

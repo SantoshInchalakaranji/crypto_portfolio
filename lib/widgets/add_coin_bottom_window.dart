@@ -18,6 +18,8 @@ class _AddCoinBottomWindowState extends State<AddCoinBottomWindow> {
   @override
   Widget build(BuildContext context) {
     void submitData()  {
+
+
       final enteredCoinName = coinNameInput.text;
       final enteredCoinPrice = double.parse(coinPriceInput.text);
      
@@ -41,7 +43,9 @@ class _AddCoinBottomWindowState extends State<AddCoinBottomWindow> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            
             TextField(
+              
               controller: coinNameInput,
               decoration: InputDecoration(
                   labelText: 'Coin Name',

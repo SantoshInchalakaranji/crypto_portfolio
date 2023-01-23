@@ -18,7 +18,7 @@ static final List<String> values = [
 }
 
 class Exchange {
-  final int userID;
+   final int userID;
   final int coinID;
   final double FTX;
   final double Binance;
@@ -47,6 +47,16 @@ class Exchange {
         ExchangeFields.FTXBuyPrice: FTXBuyPrice,
         ExchangeFields.OctaFXBuyPrice: OctaFXBuyPrice
       };
+       static Exchange fromJson(Map<String, Object?> json) => Exchange(
+    coinID: json[ExchangeFields.coinID] as int,
+    userID: json[ExchangeFields.userID] as int,
+    Binance: json[ExchangeFields.Binance] as double,
+    FTX: json[ExchangeFields.FTX] as double,
+    OctaFX: json[ExchangeFields.OctaFX] as double,
+    BinaceBuyPrice: json[ExchangeFields.BinaceBuyPrice] as double,
+    FTXBuyPrice: json[ExchangeFields.FTXBuyPrice] as double,
+    OctaFXBuyPrice: json[ExchangeFields.OctaFXBuyPrice] as double,
+  );
 
   Exchange copy(
           {int? userID,

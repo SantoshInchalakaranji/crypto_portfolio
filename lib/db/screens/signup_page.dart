@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:crypto_portfolio/db/crypto_database.dart';
+import 'package:crypto_portfolio/db/screens/home_page.dart';
 import 'package:crypto_portfolio/db/screens/login_page.dart';
 import 'package:crypto_portfolio/db/screens/user_details_page.dart';
 import 'package:crypto_portfolio/main.dart';
@@ -178,10 +179,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                 onPressed: scaffold.hideCurrentSnackBar),
                           ),
                         );
+                        Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(
+                  userID: generatedID) ,),
+                  
+            );
                       }
 
-                        Navigator.of(context).pushNamed(UserDetailsPage.routeName
-                 );
+                       
                     },
                     child: Text(
                       'Sign Up',
